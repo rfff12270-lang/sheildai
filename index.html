@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+lm<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
@@ -103,6 +103,7 @@
       history.push(link + " → " + verdict);
       historyDiv.innerHTML = history.map(h => "• " + h).join("<br>");
     }
+  
 
     function resetApp() {
       document.getElementById("link").value = "";
@@ -113,3 +114,24 @@
 
 </body>
 </html>
+<p style="color:#38bdf8;">
+✔ Détection rapide • ✔ Arnaques • ✔ Phishing • ✔ Gratuit
+</p>
+
+<p style="font-size:12px;opacity:0.7;">
+Outil éducatif de cybersécurité pour éviter les liens suspects.
+</p>
+<button onclick="share()">📤 Partager</button>
+function share() {
+  let url = window.location.href;
+  alert("Copie ce lien et partage : " + url);
+}
+<button onclick="window.open('https://wa.me/2290162226296','_blank')">
+💬 Contact WhatsApp
+</button>
+<p style="color:gold;">
+⭐ Version Premium bientôt disponible : analyse avancée des liens
+</p>
+<p>
+Tu veux une analyse plus poussée ? Contacte-nous sur WhatsApp.
+</p>
