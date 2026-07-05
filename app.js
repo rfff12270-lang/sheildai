@@ -1,4 +1,3 @@
-
 /* =========================
    NAVIGATION TABS
 ========================= */
@@ -11,9 +10,20 @@ function showTab(tabId) {
 /* =========================
    RESULT SYSTEM
 ========================= */
-function showResult(result, details) {
+
+function showResult(result, details, score = null, type = "link") {
+
   document.getElementById("result").innerText = result;
-  document.getElementById("details").innerHTML = details.join("<br>");
+
+  let aiText = "";
+
+  if (score !== null) {
+    aiText = generateAIExplanation(score, details, type);
+  } else {
+    aiText = details.join("\n");
+  }
+
+  document.getElementById("details").innerText = aiText;
 
   saveHistory(result, details);
 }
@@ -263,3 +273,44 @@ function clearHistory() {
 
 /* INIT */
 renderHistory();
+
+function generateAIExplanation(score, reasons, type) {
+
+  let intro = "";
+  let advice = "";
+
+  if (type === "link") {
+    intro = "Analyse IA du lien :";
+    advice = "Vérifiez toujours l'identité du site avant de saisir des données sensibles.";
+  }
+
+  if (type === "phone") {
+    intro = "Analyse IA du numéro :";
+    advice = "Un numéro inconnu doit toujours être traité avec prudence.";
+  }
+
+  if (type === "message") {
+    intro = "Analyse IA du message :";
+    advice = "Les messages contenant urgence ou argent sont souvent utilisés dans les arnaques.";
+  }
+
+  let text = intro + "\n\n";
+
+  if (score >= 80) {
+    text += "Le niveau de confiance est élevé.\n\n";
+  } else if (score >= 60) {
+    text += "Le niveau de confiance est moyen.\n\n";
+  } else {
+    text += "Le niveau de confiance est faible.\n\n";
+  }
+
+  text += "Éléments détectés :\n";
+
+  reasons.forEach(r => {
+    text += "• " + r.replace(/[🟢🟡🟠🔴🔵]/g, "") + "\n";
+  });
+
+  text += "\nRecommandation : " + advice;
+
+  return text;
+}
