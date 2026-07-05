@@ -21,44 +21,98 @@ function showResult(result, details) {
 /* =========================
    LINK ANALYSIS
 ========================= */
-function analyzeLink() {
-  let link = document.getElementById("linkInput").value;
-  let score = 0;
-  let reasons = [];
+  function analyzeLink() {
+
+  let link = document.getElementById("linkInput").value.trim();
 
   if (!link) {
-    showResult("⚠️ Aucun lien", []);
+    showResult("⚠️ Aucun lien saisi", [
+      "Veuillez entrer un lien à analyser."
+    ]);
     return;
   }
 
-  if (!link.startsWith("https")) {
-    score++;
-    reasons.push("❌ Pas de HTTPS");
+  let score = 100;
+  let reasons = [];
+
+  const text = link.toLowerCase();
+
+  // Vérifie si le protocole est indiqué
+  if (!text.startsWith("http://") && !text.startsWith("https://")) {
+    score -= 10;
+    reasons.push("🔵 Le protocole (http/https) n'est pas indiqué.");
+    reasons.push("ℹ️ Cela ne signifie pas que le site est dangereux.");
   }
 
-  let scamWords = ["free", "win", "gift", "login", "verify", "urgent", "password"];
+  // HTTP uniquement
+  if (text.startsWith("http://")) {
+    score -= 30;
+    reasons.push("🟠 Le site utilise HTTP au lieu de HTTPS.");
+    reasons.push("🛡️ Évitez de transmettre des informations sensibles.");
+  }
 
-  scamWords.forEach(w => {
-    if (link.toLowerCase().includes(w)) {
-      score++;
-      reasons.push("⚠️ Mot suspect : " + w);
+  // HTTPS
+  if (text.startsWith("https://")) {
+    reasons.push("🟢 Connexion HTTPS détectée.");
+  }
+
+  // Adresse très longue
+  if (link.length > 80) {
+    score -= 15;
+    reasons.push("🟡 L'adresse est particulièrement longue.");
+  }
+
+  // Mots souvent utilisés dans des tentatives d'hameçonnage
+  const riskyWords = [
+    "login",
+    "verify",
+    "password",
+    "gift",
+    "free",
+    "bonus",
+    "bank",
+    "wallet",
+    "crypto",
+    "claim"
+  ];
+
+  riskyWords.forEach(word => {
+    if (text.includes(word)) {
+      score -= 10;
+      reasons.push("🟠 Mot sensible détecté : " + word);
     }
   });
 
-  if (link.length > 60) {
-    score++;
-    reasons.push("⚠️ Lien trop long");
+  // Limites
+  if (score < 0) score = 0;
+
+  let verdict;
+
+  if (score >= 90) {
+    verdict = "🟢 Fiable (" + score + "/100)";
+  }
+  else if (score >= 70) {
+    verdict = "🔵 À vérifier (" + score + "/100)";
+  }
+  else if (score >= 50) {
+    verdict = "🟡 Prudence (" + score + "/100)";
+  }
+  else if (score >= 30) {
+    verdict = "🟠 Risque élevé (" + score + "/100)";
+  }
+  else {
+    verdict = "🔴 Probablement frauduleux (" + score + "/100)";
   }
 
-  let verdict =
-    score === 0 ? "🟢 LIEN SÛR" :
-    score === 1 ? "🟡 SUSPECT" :
-    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
-    "🔴 DANGEREUX";
+  // Si aucune remarque
+  if (reasons.length === 0) {
+    reasons.push("✅ Aucun indice de risque évident n'a été détecté.");
+    reasons.push("ℹ️ Une analyse automatique ne garantit jamais qu'un site est totalement sûr.");
+  }
 
   showResult(verdict, reasons);
-}
 
+  }
 /* =========================
    PHONE ANALYSIS
 ========================= */
