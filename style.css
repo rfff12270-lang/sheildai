@@ -1,0 +1,114 @@
+
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b0f19;
+  color: #ffffff;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* ===== HEADER ===== */
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  color: #38bdf8;
+  font-size: 32px;
+}
+
+header p {
+  color: #aaa;
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.tabs button {
+  background: #111827;
+  border: 1px solid #1f2937;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  background: #1f2937;
+}
+
+/* ===== SECTIONS ===== */
+.tab {
+  display: none;
+  background: #111827;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.tab.active {
+  display: block;
+}
+
+/* ===== INPUT ===== */
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+/* ===== BUTTON ===== */
+button {
+  margin-top: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #38bdf8;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0ea5e9;
+}
+
+/* ===== RESULT ===== */
+.result-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #111827;
+  border-radius: 10px;
+}
+
+#result {
+  font-size: 22px;
+}
+
+/* ===== HISTORY ===== */
+.history {
+  margin-top: 20px;
+  padding: 15px;
+  background: #111827;
+  border-radius: 10px;
+}
+
+.actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
