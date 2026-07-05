@@ -11,14 +11,18 @@ function showTab(tabId) {
    RESULT SYSTEM
 ========================= */
 
-function showResult(result, details, score = null, type = "link") {
+async function showResult(result, details, score = null, type = "link") {
 
   document.getElementById("result").innerText = result;
 
   let aiText = "";
 
   if (score !== null) {
-    aiText = generateAIExplanation(score, details, type);
+
+    let aiResponse = await askAI(result, details);
+
+    aiText = aiResponse;
+
   } else {
     aiText = details.join("\n");
   }
@@ -27,7 +31,6 @@ function showResult(result, details, score = null, type = "link") {
 
   saveHistory(result, details);
 }
-
 /* =========================
    LINK ANALYSIS
 ========================= */
@@ -314,3 +317,44 @@ function generateAIExplanation(score, reasons, type) {
 
   return text;
 }
+
+async function askAI(result, details) {
+
+  const prompt = `
+Tu es ShieldAI, un assistant de cybersécurité.
+
+Analyse ce résultat :
+
+Résultat: ${result}
+
+Détails:
+${details.join("\n")}
+
+Explique simplement le niveau de risque et donne une recommandation claire.
+`;
+
+  try {
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer TA_CLE_API_ICI"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: "Tu es un expert en cybersécurité." },
+          { role: "user", content: prompt }
+        ]
+      })
+    });
+
+    const data = await response.json();
+
+    return data.choices[0].message.content;
+
+  } catch (error) {
+    return "⚠️ IA indisponible pour le moment.";
+  }
+     }
