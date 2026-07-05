@@ -2,164 +2,69 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShieldAI Pro</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<script>
-function showResult(verdict, reasons) {
-  document.getElementById("result").innerHTML = verdict;
-  document.getElementById("details").innerHTML = reasons.join("<br>");
-}
 
-/* ===================== LIENS ===================== */
-function analyzeLink() {
-  let link = document.getElementById("link").value;
-  let score = 0;
-  let reasons = [];
+<body>
 
-  if (!link) return showResult("⚠️ Aucun lien", []);
+  <div class="container">
 
-  if (!link.startsWith("https")) {
-    score++;
-    reasons.push("❌ Pas sécurisé (HTTPS manquant)");
-  }
+    <header>
+      <h1>🛡️ ShieldAI Pro</h1>
+      <p>Détecte les arnaques en ligne (liens • numéros • messages)</p>
+    </header>
 
-  let scamWords = ["free", "win", "gift", "urgent", "verify", "login", "password"];
+    <!-- NAV -->
+    <div class="tabs">
+      <button onclick="showTab('link')">🔗 Lien</button>
+      <button onclick="showTab('phone')">📞 Numéro</button>
+      <button onclick="showTab('msg')">💬 Message</button>
+    </div>
 
-  scamWords.forEach(w => {
-    if (link.toLowerCase().includes(w)) {
-      score++;
-      reasons.push("⚠️ Mot suspect : " + w);
-    }
-  });
+    <!-- LINK -->
+    <section id="link" class="tab active">
+      <h2>Analyse de lien</h2>
+      <input id="linkInput" placeholder="Colle un lien ici">
+      <button onclick="analyzeLink()">Analyser</button>
+    </section>
 
-  if (link.length > 60) {
-    score++;
-    reasons.push("⚠️ Lien trop long");
-  }
+    <!-- PHONE -->
+    <section id="phone" class="tab">
+      <h2>Analyse numéro</h2>
+      <input id="phoneInput" placeholder="+229 / +225 ...">
+      <button onclick="analyzePhone()">Analyser</button>
+    </section>
 
-  let verdict =
-    score === 0 ? "🟢 LIEN SÛR" :
-    score === 1 ? "🟡 SUSPECT" :
-    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
-    "🔴 DANGEREUX";
+    <!-- MESSAGE -->
+    <section id="msg" class="tab">
+      <h2>Analyse message</h2>
+      <textarea id="msgInput" placeholder="Colle un message suspect"></textarea>
+      <button onclick="analyzeMessage()">Analyser</button>
+    </section>
 
-  showResult(verdict, reasons);
-}
+    <!-- RESULT -->
+    <div class="result-box">
+      <h2 id="result">Résultat</h2>
+      <p id="details"></p>
+    </div>
 
-/* ===================== NUMEROS ===================== */
-function analyzePhone() {
-  let phone = document.getElementById("phone").value;
-  let score = 0;
-  let reasons = [];
+    <!-- HISTORY -->
+    <div class="history">
+      <h3>📜 Historique</h3>
+      <div id="historyList"></div>
+      <button onclick="clearHistory()">🗑️ Effacer l’historique</button>
+    </div>
 
-  if (!phone) return showResult("⚠️ Aucun numéro", []);
+    <!-- ACTIONS -->
+    <div class="actions">
+      <button onclick="resetAll()">🔄 Réinitialiser</button>
+      <button onclick="copyResult()">📋 Copier résultat</button>
+    </div>
 
-  if (phone.length < 8 || phone.length > 15) {
-    score++;
-    reasons.push("⚠️ Format étrange");
-  }
+  </div>
 
-  if (/[^0-9+ ]/.test(phone)) {
-    score++;
-    reasons.push("⚠️ Caractères invalides");
-  }
-
-  if (/(.)\1{4,}/.test(phone)) {
-    score++;
-    reasons.push("⚠️ Numéro suspect (répétition)");
-  }
-
-  let verdict =
-    score === 0 ? "🟢 NUMÉRO NORMAL" :
-    score === 1 ? "🟡 SUSPECT" :
-    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
-    "🔴 TRÈS SUSPECT";
-
-  showResult(verdict, reasons);
-}
-
-/* ===================== MESSAGES ===================== */
-function analyzeMessage() {
-  let msg = document.getElementById("message").value;
-  let score = 0;
-  let reasons = [];
-
-  if (!msg) return showResult("⚠️ Aucun message", []);
-
-  let words = ["gagné", "argent", "urgent", "clique", "prix", "lotterie", "verifier"];
-
-  words.forEach(w => {
-    if (msg.toLowerCase().includes(w)) {
-      score++;
-      reasons.push("⚠️ Mot suspect : " + w);
-    }
-  });
-
-  if (msg.includes("http")) {
-    score++;
-    reasons.push("⚠️ Lien dans message");
-  }
-
-  let verdict =
-    score === 0 ? "🟢 MESSAGE NORMAL" :
-    score === 1 ? "🟡 SUSPECT" :
-    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
-    "🔴 ARNAQUE PROBABLE";
-
-  showResult(verdict, reasons);
-}
-
-</script>
-
+  <script src="app.js"></script>
 </body>
 </html>
-<body style="font-family:Arial; text-align:center; padding:20px;">
-
-  <h1>🛡️ ShieldAI Pro</h1>
-
-  <p>
-    Détection intelligente des arnaques en ligne :
-    liens • numéros • messages
-  </p>
-
-  <hr>
-
-  <!-- LIENS -->
-  <h3>🔗 Analyse de lien</h3>
-  <input id="link" placeholder="Colle un lien" style="width:80%; padding:10px;">
-  <button onclick="analyzeLink()">Analyser</button>
-
-  <hr>
-
-  <!-- NUMEROS -->
-  <h3>📞 Analyse numéro</h3>
-  <input id="phone" placeholder="+225..." style="width:80%; padding:10px;">
-  <button onclick="analyzePhone()">Analyser</button>
-
-  <hr>
-
-  <!-- MESSAGE -->
-  <h3>💬 Analyse message</h3>
-  <textarea id="message" placeholder="Colle un message suspect" style="width:80%; height:100px;"></textarea>
-  <br>
-  <button onclick="analyzeMessage()">Analyser</button>
-
-  <hr>
-
-  <h2 id="result"></h2>
-  <p id="details"></p>
-
-  <hr>
-
-  <p style="font-size:12px; color:gray;">
-    ShieldAI Pro - Outil de protection contre les arnaques numériques
-  </p>
-<button onclick="window.open('https://wa.me/2290162226296','_blank')">
-💬 Analyse sur WhatsApp
-</button>
-<p style="color:gold;">
-⭐ Version Premium bientôt disponible : analyse avancée + protection complète
-</p>
-<p>
-👉 Besoin d’une vérification rapide ? Utilise WhatsApp ou partage l’outil.
-</p>
