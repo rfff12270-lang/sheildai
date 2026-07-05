@@ -1,160 +1,16 @@
-lm<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>ShieldAI</title>
-
-  <style>
-    body {
-      font-family: Arial;
-      text-align: center;
-      padding: 20px;
-      background: #0f172a;
-      color: white;
-    }
-
-    input {
-      width: 85%;
-      padding: 12px;
-      border-radius: 10px;
-      border: none;
-      margin-top: 10px;
-    }
-
-    button {
-      padding: 10px 15px;
-      margin: 5px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    #result {
-      font-size: 22px;
-      margin-top: 15px;
-    }
-  </style>
+  <title>ShieldAI Pro</title>
 </head>
-
-<body>
-
-  <h1>🛡️ ShieldAI</h1>
-  <p>Détecte les liens dangereux (arnaques, phishing, faux sites)</p>
-
-  <input id="link" placeholder="Colle ton lien ici">
-
-  <br><br>
-
-  <button onclick="analyze()">Analyser</button>
-  <button onclick="resetApp()">Réinitialiser</button>
-
-  <h2 id="result"></h2>
-  <p id="details"></p>
-
-  <h3>Historique</h3>
-  <div id="history"></div>
-
-  <script>
-    let history = [];
-
-    function analyze() {
-      let link = document.getElementById("link").value;
-      let result = document.getElementById("result");
-      let details = document.getElementById("details");
-      let historyDiv = document.getElementById("history");
-
-      if (!link) {
-        result.innerHTML = "⚠️ Entre un lien";
-        return;
-      }
-
-      let score = 0;
-      let reasons = [];
-
-      if (!link.startsWith("https")) {
-        score++;
-        reasons.push("❌ Pas de HTTPS");
-      }
-
-      let badWords = ["free", "win", "gift", "login", "verify", "password", "urgent"];
-
-      for (let word of badWords) {
-        if (link.toLowerCase().includes(word)) {
-          score++;
-          reasons.push("⚠️ Mot suspect : " + word);
-        }
-      }
-
-      if (link.length > 60) {
-        score++;
-        reasons.push("⚠️ Lien trop long");
-      }
-
-      let verdict = "";
-
-      if (score === 0) verdict = "🟢 SÛR";
-      else if (score === 1) verdict = "🟡 SUSPECT";
-      else if (score === 2) verdict = "🟠 RISQUE ÉLEVÉ";
-      else verdict = "🔴 DANGEREUX";
-
-      result.innerHTML = verdict;
-      details.innerHTML = reasons.join("<br>");
-
-      history.push(link + " → " + verdict);
-      historyDiv.innerHTML = history.map(h => "• " + h).join("<br>");
-    }
-  
-
-    function resetApp() {
-      document.getElementById("link").value = "";
-      document.getElementById("result").innerHTML = "";
-      document.getElementById("details").innerHTML = "";
-    }
-  </script>
-
-</body>
-</html>
-<p style="color:#38bdf8;">
-✔ Détection rapide • ✔ Arnaques • ✔ Phishing • ✔ Gratuit
-</p>
-
-<p style="font-size:12px;opacity:0.7;">
-Outil éducatif de cybersécurité pour éviter les liens suspects.
-</p>
-<button onclick="share()">📤 Partager</button>
-("Copie ce lien et partage : " https://chic-rolypoly-4581ee.netlify.app);
-}
-<button onclick="window.open('https://wa.me/2290162226296','_blank')">
-💬 Contact WhatsApp
-</button>
-<p style="color:gold;">
-⭐ Version Premium bientôt disponible : analyse avancée des liens
-</p>
-<p>
-Tu veux une analyse plus poussée ? Contacte-nous sur WhatsApp.
-</p>
-<h2>🛡️ ShieldAI Pro</h2>
-
-<h3>🔗 Analyse de lien</h3>
-<input id="link" placeholder="Colle un lien">
-<button onclick="analyzeLink()">Analyser lien</button>
-
-<h3>📞 Analyse numéro</h3>
-<input id="phone" placeholder="Ex: +2250143018500">
-<button onclick="analyzePhone()">Analyser numéro</button>
-
-<h3>💬 Analyse message</h3>
-<textarea id="message" placeholder="Colle un message suspect"></textarea>
-<button onclick="analyzeMessage()">Analyser message</button>
-
-<h2 id="result"></h2>
-<p id="details"></p>
 
 function showResult(verdict, reasons) {
   document.getElementById("result").innerHTML = verdict;
   document.getElementById("details").innerHTML = reasons.join("<br>");
 }
 
+/* ===================== LIENS ===================== */
 function analyzeLink() {
   let link = document.getElementById("link").value;
   let score = 0;
@@ -164,15 +20,15 @@ function analyzeLink() {
 
   if (!link.startsWith("https")) {
     score++;
-    reasons.push("❌ Pas de HTTPS");
+    reasons.push("❌ Pas sécurisé (HTTPS manquant)");
   }
 
-  let badWords = ["free", "win", "gift", "login", "verify", "urgent", "password"];
+  let scamWords = ["free", "win", "gift", "urgent", "verify", "login", "password"];
 
-  badWords.forEach(word => {
-    if (link.toLowerCase().includes(word)) {
+  scamWords.forEach(w => {
+    if (link.toLowerCase().includes(w)) {
       score++;
-      reasons.push("⚠️ Mot suspect : " + word);
+      reasons.push("⚠️ Mot suspect : " + w);
     }
   });
 
@@ -190,6 +46,7 @@ function analyzeLink() {
   showResult(verdict, reasons);
 }
 
+/* ===================== NUMEROS ===================== */
 function analyzePhone() {
   let phone = document.getElementById("phone").value;
   let score = 0;
@@ -199,7 +56,7 @@ function analyzePhone() {
 
   if (phone.length < 8 || phone.length > 15) {
     score++;
-    reasons.push("⚠️ Longueur étrange");
+    reasons.push("⚠️ Format étrange");
   }
 
   if (/[^0-9+ ]/.test(phone)) {
@@ -209,7 +66,7 @@ function analyzePhone() {
 
   if (/(.)\1{4,}/.test(phone)) {
     score++;
-    reasons.push("⚠️ Chiffres répétitifs suspects");
+    reasons.push("⚠️ Numéro suspect (répétition)");
   }
 
   let verdict =
@@ -221,6 +78,7 @@ function analyzePhone() {
   showResult(verdict, reasons);
 }
 
+/* ===================== MESSAGES ===================== */
 function analyzeMessage() {
   let msg = document.getElementById("message").value;
   let score = 0;
@@ -228,12 +86,12 @@ function analyzeMessage() {
 
   if (!msg) return showResult("⚠️ Aucun message", []);
 
-  let scamWords = ["gagné", "urgent", "argent", "clique", "verifier", "prix", "lotterie"];
+  let words = ["gagné", "argent", "urgent", "clique", "prix", "lotterie", "verifier"];
 
-  scamWords.forEach(word => {
-    if (msg.toLowerCase().includes(word)) {
+  words.forEach(w => {
+    if (msg.toLowerCase().includes(w)) {
       score++;
-      reasons.push("⚠️ Mot suspect : " + word);
+      reasons.push("⚠️ Mot suspect : " + w);
     }
   });
 
@@ -250,3 +108,49 @@ function analyzeMessage() {
 
   showResult(verdict, reasons);
 }
+
+</script>
+
+</body>
+</html>
+<body style="font-family:Arial; text-align:center; padding:20px;">
+
+  <h1>🛡️ ShieldAI Pro</h1>
+
+  <p>
+    Détection intelligente des arnaques en ligne :
+    liens • numéros • messages
+  </p>
+
+  <hr>
+
+  <!-- LIENS -->
+  <h3>🔗 Analyse de lien</h3>
+  <input id="link" placeholder="Colle un lien" style="width:80%; padding:10px;">
+  <button onclick="analyzeLink()">Analyser</button>
+
+  <hr>
+
+  <!-- NUMEROS -->
+  <h3>📞 Analyse numéro</h3>
+  <input id="phone" placeholder="+225..." style="width:80%; padding:10px;">
+  <button onclick="analyzePhone()">Analyser</button>
+
+  <hr>
+
+  <!-- MESSAGE -->
+  <h3>💬 Analyse message</h3>
+  <textarea id="message" placeholder="Colle un message suspect" style="width:80%; height:100px;"></textarea>
+  <br>
+  <button onclick="analyzeMessage()">Analyser</button>
+
+  <hr>
+
+  <h2 id="result"></h2>
+  <p id="details"></p>
+
+  <hr>
+
+  <p style="font-size:12px; color:gray;">
+    ShieldAI Pro - Outil de protection contre les arnaques numériques
+  </p>
