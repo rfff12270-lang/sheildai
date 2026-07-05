@@ -133,3 +133,120 @@ Outil éducatif de cybersécurité pour éviter les liens suspects.
 <p>
 Tu veux une analyse plus poussée ? Contacte-nous sur WhatsApp.
 </p>
+<h2>🛡️ ShieldAI Pro</h2>
+
+<h3>🔗 Analyse de lien</h3>
+<input id="link" placeholder="Colle un lien">
+<button onclick="analyzeLink()">Analyser lien</button>
+
+<h3>📞 Analyse numéro</h3>
+<input id="phone" placeholder="Ex: +2250143018500">
+<button onclick="analyzePhone()">Analyser numéro</button>
+
+<h3>💬 Analyse message</h3>
+<textarea id="message" placeholder="Colle un message suspect"></textarea>
+<button onclick="analyzeMessage()">Analyser message</button>
+
+<h2 id="result"></h2>
+<p id="details"></p>
+
+function showResult(verdict, reasons) {
+  document.getElementById("result").innerHTML = verdict;
+  document.getElementById("details").innerHTML = reasons.join("<br>");
+}
+
+function analyzeLink() {
+  let link = document.getElementById("link").value;
+  let score = 0;
+  let reasons = [];
+
+  if (!link) return showResult("⚠️ Aucun lien", []);
+
+  if (!link.startsWith("https")) {
+    score++;
+    reasons.push("❌ Pas de HTTPS");
+  }
+
+  let badWords = ["free", "win", "gift", "login", "verify", "urgent", "password"];
+
+  badWords.forEach(word => {
+    if (link.toLowerCase().includes(word)) {
+      score++;
+      reasons.push("⚠️ Mot suspect : " + word);
+    }
+  });
+
+  if (link.length > 60) {
+    score++;
+    reasons.push("⚠️ Lien trop long");
+  }
+
+  let verdict =
+    score === 0 ? "🟢 LIEN SÛR" :
+    score === 1 ? "🟡 SUSPECT" :
+    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
+    "🔴 DANGEREUX";
+
+  showResult(verdict, reasons);
+}
+
+function analyzePhone() {
+  let phone = document.getElementById("phone").value;
+  let score = 0;
+  let reasons = [];
+
+  if (!phone) return showResult("⚠️ Aucun numéro", []);
+
+  if (phone.length < 8 || phone.length > 15) {
+    score++;
+    reasons.push("⚠️ Longueur étrange");
+  }
+
+  if (/[^0-9+ ]/.test(phone)) {
+    score++;
+    reasons.push("⚠️ Caractères invalides");
+  }
+
+  if (/(.)\1{4,}/.test(phone)) {
+    score++;
+    reasons.push("⚠️ Chiffres répétitifs suspects");
+  }
+
+  let verdict =
+    score === 0 ? "🟢 NUMÉRO NORMAL" :
+    score === 1 ? "🟡 SUSPECT" :
+    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
+    "🔴 TRÈS SUSPECT";
+
+  showResult(verdict, reasons);
+}
+
+function analyzeMessage() {
+  let msg = document.getElementById("message").value;
+  let score = 0;
+  let reasons = [];
+
+  if (!msg) return showResult("⚠️ Aucun message", []);
+
+  let scamWords = ["gagné", "urgent", "argent", "clique", "verifier", "prix", "lotterie"];
+
+  scamWords.forEach(word => {
+    if (msg.toLowerCase().includes(word)) {
+      score++;
+      reasons.push("⚠️ Mot suspect : " + word);
+    }
+  });
+
+  if (msg.includes("http")) {
+    score++;
+    reasons.push("⚠️ Lien dans message");
+  }
+
+  let verdict =
+    score === 0 ? "🟢 MESSAGE NORMAL" :
+    score === 1 ? "🟡 SUSPECT" :
+    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
+    "🔴 ARNAQUE PROBABLE";
+
+  showResult(verdict, reasons);
+}
