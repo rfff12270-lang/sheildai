@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>ShieldAI</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 20px;
+      background: #0f172a;
+      color: white;
+    }
+
+    input {
+      width: 85%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #result {
+      font-size: 22px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🛡️ ShieldAI</h1>
+  <p>Détecte les liens dangereux (arnaques, phishing, faux sites)</p>
+
+  <input id="link" placeholder="Colle ton lien ici">
+
+  <br><br>
+
+  <button onclick="analyze()">Analyser</button>
+  <button onclick="resetApp()">Réinitialiser</button>
+
+  <h2 id="result"></h2>
+  <p id="details"></p>
+
+  <h3>Historique</h3>
+  <div id="history"></div>
+
+  <script>
+    let history = [];
+
+    function analyze() {
+      let link = document.getElementById("link").value;
+      let result = document.getElementById("result");
+      let details = document.getElementById("details");
+      let historyDiv = document.getElementById("history");
+
+      if (!link) {
+        result.innerHTML = "⚠️ Entre un lien";
+        return;
+      }
+
+      let score = 0;
+      let reasons = [];
+
+      if (!link.startsWith("https")) {
+        score++;
+        reasons.push("❌ Pas de HTTPS");
+      }
+
+      let badWords = ["free", "win", "gift", "login", "verify", "password", "urgent"];
+
+      for (let word of badWords) {
+        if (link.toLowerCase().includes(word)) {
+          score++;
+          reasons.push("⚠️ Mot suspect : " + word);
+        }
+      }
+
+      if (link.length > 60) {
+        score++;
+        reasons.push("⚠️ Lien trop long");
+      }
+
+      let verdict = "";
+
+      if (score === 0) verdict = "🟢 SÛR";
+      else if (score === 1) verdict = "🟡 SUSPECT";
+      else if (score === 2) verdict = "🟠 RISQUE ÉLEVÉ";
+      else verdict = "🔴 DANGEREUX";
+
+      result.innerHTML = verdict;
+      details.innerHTML = reasons.join("<br>");
+
+      history.push(link + " → " + verdict);
+      historyDiv.innerHTML = history.map(h => "• " + h).join("<br>");
+    }
+
+    function resetApp() {
+      document.getElementById("link").value = "";
+      document.getElementById("result").innerHTML = "";
+      document.getElementById("details").innerHTML = "";
+    }
+  </script>
+
+</body>
+</html>
