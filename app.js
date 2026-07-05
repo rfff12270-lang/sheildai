@@ -62,6 +62,7 @@ function analyzeLink() {
 /* =========================
    PHONE ANALYSIS
 ========================= */
+
 function analyzePhone() {
   let phone = document.getElementById("phoneInput").value;
   let score = 0;
@@ -72,17 +73,39 @@ function analyzePhone() {
     return;
   }
 
-  if (phone.length < 8 || phone.length > 15) {
+  // nettoyage
+  let clean = phone.replace(/\s/g, "");
+
+  // 1. longueur suspecte
+  if (clean.length < 8 || clean.length > 15) {
     score++;
-    reasons.push("⚠️ Format étrange");
+    reasons.push("⚠️ Format invalide");
   }
 
-  if (/[^0-9+ ]/.test(phone)) {
+  // 2. caractères invalides
+  if (/[^0-9+]/.test(clean)) {
     score++;
-    reasons.push("⚠️ Caractères invalides");
+    reasons.push("⚠️ Caractères suspects");
   }
 
-  if (/(.)\1{4,}/.test(phone)) {
+  // 3. codes pays suspects incohérents (ex: +225 puis format incohérent)
+  if (clean.startsWith("+225") && clean.length !== 13) {
+    score++;
+    reasons.push("⚠️ Format Côte d'Ivoire incohérent");
+  }
+
+  if (clean.startsWith("+229") && clean.length !== 12) {
+    score++;
+    reasons.push("⚠️ Format Bénin incohérent");
+  }
+
+  // 4. numéros trop “faux” (beaucoup de zéros ou répétitions)
+  if ((clean.match(/0/g) || []).length > 6) {
+    score++;
+    reasons.push("⚠️ Trop de zéros (suspect)");
+  }
+
+  if (/(.)\1{4,}/.test(clean)) {
     score++;
     reasons.push("⚠️ Répétition suspecte");
   }
@@ -95,7 +118,6 @@ function analyzePhone() {
 
   showResult(verdict, reasons);
 }
-
 /* =========================
    MESSAGE ANALYSIS
 ========================= */
