@@ -1,360 +1,122 @@
+
 /* =========================
-   NAVIGATION TABS
+   NAVIGATION
 ========================= */
 function showTab(tabId) {
-  let tabs = document.querySelectorAll(".tab");
-  tabs.forEach(t => t.classList.remove("active"));
-  document.getElementById(tabId).classList.add("active");
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
 }
 
 /* =========================
-   RESULT SYSTEM
+   RESULT DISPLAY
 ========================= */
-
-async function showResult(result, details, score = null, type = "link") {
-
+function showResult(result, details) {
   document.getElementById("result").innerText = result;
-
-  let aiText = "";
-
-  if (score !== null) {
-
-    let aiResponse = await askAI(result, details);
-
-    aiText = aiResponse;
-
-  } else {
-    aiText = details.join("\n");
-  }
-
-  document.getElementById("details").innerText = aiText;
-
-  saveHistory(result, details);
+  document.getElementById("details").innerText = details.join("\n");
 }
+
 /* =========================
    LINK ANALYSIS
 ========================= */
-  function analyzeLink() {
-
+function analyzeLink() {
   let link = document.getElementById("linkInput").value.trim();
-
-  if (!link) {
-    showResult("⚠️ Aucun lien saisi", [
-      "Veuillez entrer un lien à analyser."
-    ]);
-    return;
-  }
-
   let score = 100;
   let reasons = [];
 
-  const text = link.toLowerCase();
+  if (!link) return;
 
-  // Vérifie si le protocole est indiqué
-  if (!text.startsWith("http://") && !text.startsWith("https://")) {
-    score -= 10;
-    reasons.push("🔵 Le protocole (http/https) n'est pas indiqué.");
-    reasons.push("ℹ️ Cela ne signifie pas que le site est dangereux.");
+  let text = link.toLowerCase();
+
+  if (!text.startsWith("https")) {
+    score -= 20;
+    reasons.push("Connexion non sécurisée ou absente (HTTPS).");
   }
 
-  // HTTP uniquement
-  if (text.startsWith("http://")) {
-    score -= 30;
-    reasons.push("🟠 Le site utilise HTTP au lieu de HTTPS.");
-    reasons.push("🛡️ Évitez de transmettre des informations sensibles.");
-  }
+  let phishingWords = ["login", "free", "gift", "verify", "password", "bank", "urgent"];
 
-  // HTTPS
-  if (text.startsWith("https://")) {
-    reasons.push("🟢 Connexion HTTPS détectée.");
-  }
-
-  // Adresse très longue
-  if (link.length > 80) {
-    score -= 15;
-    reasons.push("🟡 L'adresse est particulièrement longue.");
-  }
-
-  // Mots souvent utilisés dans des tentatives d'hameçonnage
-  const riskyWords = [
-    "login",
-    "verify",
-    "password",
-    "gift",
-    "free",
-    "bonus",
-    "bank",
-    "wallet",
-    "crypto",
-    "claim"
-  ];
-
-  riskyWords.forEach(word => {
-    if (text.includes(word)) {
-      score -= 10;
-      reasons.push("🟠 Mot sensible détecté : " + word);
+  phishingWords.forEach(w => {
+    if (text.includes(w)) {
+      score -= 15;
+      reasons.push("Mot sensible détecté : " + w);
     }
   });
 
-  // Limites
-  if (score < 0) score = 0;
-
-  let verdict;
-
-  if (score >= 90) {
-    verdict = "🟢 Fiable (" + score + "/100)";
-  }
-  else if (score >= 70) {
-    verdict = "🔵 À vérifier (" + score + "/100)";
-  }
-  else if (score >= 50) {
-    verdict = "🟡 Prudence (" + score + "/100)";
-  }
-  else if (score >= 30) {
-    verdict = "🟠 Risque élevé (" + score + "/100)";
-  }
-  else {
-    verdict = "🔴 Probablement frauduleux (" + score + "/100)";
+  if (link.length > 80) {
+    score -= 10;
+    reasons.push("URL trop longue");
   }
 
-  // Si aucune remarque
-  if (reasons.length === 0) {
-    reasons.push("✅ Aucun indice de risque évident n'a été détecté.");
-    reasons.push("ℹ️ Une analyse automatique ne garantit jamais qu'un site est totalement sûr.");
-  }
-
+  let verdict = getVerdict(score, reasons);
   showResult(verdict, reasons);
+}
 
-  }
 /* =========================
    PHONE ANALYSIS
 ========================= */
-
 function analyzePhone() {
-  let phone = document.getElementById("phoneInput").value;
-  let score = 0;
+  let phone = document.getElementById("phoneInput").value.trim();
+  let score = 100;
   let reasons = [];
 
-  if (!phone) {
-    showResult("⚠️ Aucun numéro", []);
-    return;
+  if (!phone) return;
+
+  if (phone.length < 8 || phone.length > 15) {
+    score -= 20;
+    reasons.push("Format invalide");
   }
 
-  // nettoyage
-  let clean = phone.replace(/\s/g, "");
-
-  // 1. longueur suspecte
-  if (clean.length < 8 || clean.length > 15) {
-    score++;
-    reasons.push("⚠️ Format invalide");
+  if (/[^0-9+ ]/.test(phone)) {
+    score -= 20;
+    reasons.push("Caractères suspects");
   }
 
-  // 2. caractères invalides
-  if (/[^0-9+]/.test(clean)) {
-    score++;
-    reasons.push("⚠️ Caractères suspects");
-  }
-
-  // 3. codes pays suspects incohérents (ex: +225 puis format incohérent)
-  if (clean.startsWith("+225") && clean.length !== 13) {
-    score++;
-    reasons.push("⚠️ Format Côte d'Ivoire incohérent");
-  }
-
-  if (clean.startsWith("+229") && clean.length !== 12) {
-    score++;
-    reasons.push("⚠️ Format Bénin incohérent");
-  }
-
-  // 4. numéros trop “faux” (beaucoup de zéros ou répétitions)
-  if ((clean.match(/0/g) || []).length > 6) {
-    score++;
-    reasons.push("⚠️ Trop de zéros (suspect)");
-  }
-
-  if (/(.)\1{4,}/.test(clean)) {
-    score++;
-    reasons.push("⚠️ Répétition suspecte");
-  }
-
-  let verdict =
-    score === 0 ? "🟢 NUMÉRO NORMAL" :
-    score === 1 ? "🟡 SUSPECT" :
-    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
-    "🔴 TRÈS SUSPECT";
-
+  let verdict = getVerdict(score, reasons);
   showResult(verdict, reasons);
 }
+
 /* =========================
    MESSAGE ANALYSIS
 ========================= */
 function analyzeMessage() {
-  let msg = document.getElementById("msgInput").value;
-  let score = 0;
+  let msg = document.getElementById("msgInput").value.toLowerCase();
+  let score = 100;
   let reasons = [];
 
-  if (!msg) {
-    showResult("⚠️ Aucun message", []);
-    return;
-  }
+  if (!msg) return;
 
-  let scamWords = ["gagné", "argent", "urgent", "clique", "lotterie", "prix", "verifier"];
+  let scamWords = ["urgent", "argent", "gagné", "clique", "prix", "lotterie"];
 
   scamWords.forEach(w => {
-    if (msg.toLowerCase().includes(w)) {
-      score++;
-      reasons.push("⚠️ Mot suspect : " + w);
+    if (msg.includes(w)) {
+      score -= 20;
+      reasons.push("Mot suspect : " + w);
     }
   });
 
   if (msg.includes("http")) {
-    score++;
-    reasons.push("⚠️ Lien dans le message");
+    score -= 20;
+    reasons.push("Lien détecté dans le message");
   }
 
-  let verdict =
-    score === 0 ? "🟢 MESSAGE NORMAL" :
-    score === 1 ? "🟡 SUSPECT" :
-    score === 2 ? "🟠 RISQUE ÉLEVÉ" :
-    "🔴 ARNAQUE PROBABLE";
-
+  let verdict = getVerdict(score, reasons);
   showResult(verdict, reasons);
 }
 
 /* =========================
-   RESET
+   SCORE SYSTEM
 ========================= */
-function resetAll() {
-  document.getElementById("linkInput").value = "";
-  document.getElementById("phoneInput").value = "";
-  document.getElementById("msgInput").value = "";
-
-  document.getElementById("result").innerText = "Résultat";
-  document.getElementById("details").innerHTML = "";
-}
-
-/* =========================
-   COPY RESULT
-========================= */
-function copyResult() {
-  let text = document.getElementById("result").innerText;
-  navigator.clipboard.writeText(text);
-  alert("Résultat copié !");
-}
-
-/* =========================
-   HISTORY (LOCAL STORAGE)
-========================= */
-function saveHistory(result, details) {
-  let history = JSON.parse(localStorage.getItem("shield_history")) || [];
-
-  history.unshift({
-    result: result,
-    details: details,
-    date: new Date().toLocaleString()
-  });
-
-  history = history.slice(0, 20);
-
-  localStorage.setItem("shield_history", JSON.stringify(history));
-  renderHistory();
-}
-
-function renderHistory() {
-  let history = JSON.parse(localStorage.getItem("shield_history")) || [];
-  let box = document.getElementById("historyList");
-
-  box.innerHTML = history.map(h =>
-    `<p><b>${h.result}</b><br><small>${h.date}</small></p>`
-  ).join("");
-}
-
-function clearHistory() {
-  localStorage.removeItem("shield_history");
-  renderHistory();
-}
-
-/* INIT */
-renderHistory();
-
-function generateAIExplanation(score, reasons, type) {
-
-  let intro = "";
-  let advice = "";
-
-  if (type === "link") {
-    intro = "Analyse IA du lien :";
-    advice = "Vérifiez toujours l'identité du site avant de saisir des données sensibles.";
-  }
-
-  if (type === "phone") {
-    intro = "Analyse IA du numéro :";
-    advice = "Un numéro inconnu doit toujours être traité avec prudence.";
-  }
-
-  if (type === "message") {
-    intro = "Analyse IA du message :";
-    advice = "Les messages contenant urgence ou argent sont souvent utilisés dans les arnaques.";
-  }
-
-  let text = intro + "\n\n";
+function getVerdict(score, reasons) {
 
   if (score >= 80) {
-    text += "Le niveau de confiance est élevé.\n\n";
-  } else if (score >= 60) {
-    text += "Le niveau de confiance est moyen.\n\n";
-  } else {
-    text += "Le niveau de confiance est faible.\n\n";
+    return "🟢 Fiable (" + score + "/100)";
+  } 
+  else if (score >= 60) {
+    return "🔵 À vérifier (" + score + "/100)";
+  } 
+  else if (score >= 40) {
+    return "🟡 Prudence (" + score + "/100)";
+  } 
+  else {
+    return "🔴 Risque élevé (" + score + "/100)";
   }
-
-  text += "Éléments détectés :\n";
-
-  reasons.forEach(r => {
-    text += "• " + r.replace(/[🟢🟡🟠🔴🔵]/g, "") + "\n";
-  });
-
-  text += "\nRecommandation : " + advice;
-
-  return text;
 }
-
-async function askAI(result, details) {
-
-  const prompt = `
-Tu es ShieldAI, un assistant de cybersécurité.
-
-Analyse ce résultat :
-
-Résultat: ${result}
-
-Détails:
-${details.join("\n")}
-
-Explique simplement le niveau de risque et donne une recommandation claire.
-`;
-
-  try {
-
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer TA_CLE_API_ICI"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          { role: "system", content: "Tu es un expert en cybersécurité." },
-          { role: "user", content: prompt }
-        ]
-      })
-    });
-
-    const data = await response.json();
-
-    return data.choices[0].message.content;
-
-  } catch (error) {
-    return "⚠️ IA indisponible pour le moment.";
-  }
-     }
