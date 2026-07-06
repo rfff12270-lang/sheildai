@@ -1,3 +1,5 @@
+let safeHistory = [0];
+let riskHistory = [0];
 let totalAnalyses = 0;
 let safeCount = 0;
 let riskCount = 0;
@@ -128,3 +130,20 @@ function clearInputs() {
   document.getElementById("msgInput").value = "";
 }
 y
+function updateChart() {
+
+  safeHistory.push(safeCount);
+  riskHistory.push(riskCount);
+
+  let chartData = [];
+
+  for (let i = 0; i < safeHistory.length; i++) {
+    chartData.push({
+      index: i,
+      safe: safeHistory[i] || 0,
+      risk: riskHistory[i] || 0
+    });
+  }
+
+  renderChart(chartData);
+                   }
