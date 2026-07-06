@@ -108,3 +108,41 @@ pre {
   color: #cbd5e1;
   font-size: 14px;
 }
+.dashboard {
+  padding: 20px;
+  background: #0b0f19;
+  border-top: 1px solid #1f2937;
+}
+
+.dashboard h2 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.cards {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  background: #111827;
+  padding: 15px;
+  border-radius: 10px;
+  width: 30%;
+  min-width: 120px;
+  text-align: center;
+  border: 1px solid #1f2937;
+}
+
+.card h3 {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.card p {
+  font-size: 22px;
+  font-weight: bold;
+  margin: 5px 0 0;
+}
