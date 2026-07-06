@@ -146,3 +146,15 @@ pre {
   font-weight: bold;
   margin: 5px 0 0;
 }
+.chart-box {
+  padding: 20px;
+  margin: 15px;
+  background: #111827;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+}
+
+.chart-box h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
