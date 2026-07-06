@@ -1,4 +1,6 @@
-
+let totalAnalyses = 0;
+let safeCount = 0;
+let riskCount = 0;
 /* =========================
    NAVIGATION
 ========================= */
@@ -125,3 +127,4 @@ function clearInputs() {
   document.getElementById("phoneInput").value = "";
   document.getElementById("msgInput").value = "";
 }
+y
