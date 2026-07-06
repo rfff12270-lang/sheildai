@@ -49,7 +49,7 @@ function analyzeLink() {
   let verdict = getVerdict(score, reasons);
   showResult(verdict, reasons);
 }
-
+clearInputs();
 /* =========================
    PHONE ANALYSIS
 ========================= */
@@ -73,7 +73,7 @@ function analyzePhone() {
   let verdict = getVerdict(score, reasons);
   showResult(verdict, reasons);
 }
-
+clearInputs();
 /* =========================
    MESSAGE ANALYSIS
 ========================= */
@@ -101,7 +101,7 @@ function analyzeMessage() {
   let verdict = getVerdict(score, reasons);
   showResult(verdict, reasons);
 }
-
+clearInputs();
 /* =========================
    SCORE SYSTEM
 ========================= */
@@ -119,4 +119,9 @@ function getVerdict(score, reasons) {
   else {
     return "🔴 Risque élevé (" + score + "/100)";
   }
+}
+function clearInputs() {
+  document.getElementById("linkInput").value = "";
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("msgInput").value = "";
 }
