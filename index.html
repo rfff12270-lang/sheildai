@@ -9,97 +9,50 @@
 
 <body>
 
-  <div class="container">
+<header>
+  <h1>🛡️ ShieldAI Pro</h1>
+  <p>Analyse de sécurité intelligente</p>
+</header>
 
-    <header>
-      <h1>🛡️ ShieldAI Pro</h1>
-      <p>Détecte les arnaques en ligne (liens • numéros • messages)</p>
-    </header>
+<nav>
+  <button onclick="showTab('linkTab')">🔗 Lien</button>
+  <button onclick="showTab('phoneTab')">📞 Numéro</button>
+  <button onclick="showTab('msgTab')">💬 Message</button>
+</nav>
 
-    <!-- NAV -->
-    <div class="tabs">
-      <button onclick="showTab('link')">🔗 Lien</button>
-      <button onclick="showTab('phone')">📞 Numéro</button>
-      <button onclick="showTab('msg')">💬 Message</button>
-    </div>
+<main>
 
-    <!-- LINK -->
-    <section id="link" class="tab active">
-      <h2>Analyse de lien</h2>
-      <input id="linkInput" placeholder="Colle un lien ici">
-      <button onclick="analyzeLink()">Analyser</button>
-    </section>
+  <!-- LIEN -->
+  <section id="linkTab" class="tab active">
+    <h2>Analyse de lien</h2>
+    <input id="linkInput" placeholder="Colle un lien ici">
+    <button onclick="analyzeLink()">Analyser</button>
+  </section>
 
-    <!-- PHONE -->
-    <section id="phone" class="tab">
-      <h2>Analyse numéro</h2>
-      <input id="phoneInput" placeholder="+229 / +225 ...">
-      <button onclick="analyzePhone()">Analyser</button>
-    </section>
+  <!-- PHONE -->
+  <section id="phoneTab" class="tab">
+    <h2>Analyse de numéro</h2>
+    <input id="phoneInput" placeholder="Ex: +229XXXXXXXX">
+    <button onclick="analyzePhone()">Analyser</button>
+  </section>
 
-    <!-- MESSAGE -->
-    <section id="msg" class="tab">
-      <h2>Analyse message</h2>
-      <textarea id="msgInput" placeholder="Colle un message suspect"></textarea>
-      <button onclick="analyzeMessage()">Analyser</button>
-    </section>
+  <!-- MESSAGE -->
+  <section id="msgTab" class="tab">
+    <h2>Analyse de message</h2>
+    <textarea id="msgInput" placeholder="Colle un message suspect"></textarea>
+    <button onclick="analyzeMessage()">Analyser</button>
+  </section>
 
-    <!-- RESULT -->
-    <div class="result-box">
-      <h2 id="result">Résultat</h2>
-      <p id="details"></p>
-    </div>
+  <hr>
 
-    <!-- HISTORY -->
-    <div class="history">
-      <h3>📜 Historique</h3>
-      <div id="historyList"></div>
-      <button onclick="clearHistory()">🗑️ Effacer l’historique</button>
-    </div>
+  <section class="result-box">
+    <h2 id="result">Résultat</h2>
+    <pre id="details"></pre>
+  </section>
 
-    <!-- ACTIONS -->
-    <div class="actions">
-      <button onclick="resetAll()">🔄 Réinitialiser</button>
-      <button onclick="copyResult()">📋 Copier résultat</button>
-    </div>
+</main>
 
-  </div>
+<script src="app.js"></script>
 
-  <script src="app.js"></script>
 </body>
 </html>
-<section style="text-align:center; padding:30px;">
-  
-  <h1>🛡️ ShieldAI Pro</h1>
-
-  <h2>Votre bouclier contre les fraudes en ligne</h2>
-
-  <p>
-    Analysez instantanément les liens, messages et numéros suspects
-    pour éviter les arnaques numériques.
-  </p>
-
-  <hr>
-
-  <h3>⚡ Ce que vous obtenez</h3>
-  <p>
-    ✔ Détection de liens frauduleux<br>
-    ✔ Analyse de messages suspects<br>
-    ✔ Vérification de numéros<br>
-    ✔ Score de risque intelligent<br>
-    ✔ Historique des analyses
-  </p>
-
-  <hr>
-
-  <h3>💰 Offre</h3>
-  <p>
-    Version gratuite disponible<br>
-    Premium bientôt disponible
-  </p>
-
-  <button onclick="window.open('https://wa.me/2290162226296')">
-    💬 Nous contacter sur WhatsApp
-  </button>
-
-</section>
