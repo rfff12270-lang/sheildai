@@ -1,36 +1,54 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  background: #0b0f19;
+  background: linear-gradient(135deg, #0b0f19, #111827);
   color: white;
 }
 
+/* HEADER */
 header {
   text-align: center;
-  padding: 20px;
-  background: #111827;
+  padding: 25px;
+  background: #0f172a;
+  border-bottom: 1px solid #1f2937;
 }
 
+header h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+header p {
+  color: #94a3b8;
+}
+
+/* NAV */
 nav {
   display: flex;
   justify-content: space-around;
   padding: 10px;
-  background: #1f2937;
+  background: #111827;
+  position: sticky;
+  top: 0;
 }
 
-button {
-  padding: 10px;
+nav button {
+  padding: 10px 15px;
   border: none;
+  border-radius: 8px;
   background: #38bdf8;
   color: black;
-  border-radius: 6px;
   font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-button:hover {
+nav button:hover {
+  transform: scale(1.05);
   background: #0ea5e9;
 }
 
+/* TABS */
 .tab {
   display: none;
   padding: 20px;
@@ -40,17 +58,53 @@ button:hover {
   display: block;
 }
 
+/* INPUTS */
 input, textarea {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
   margin-top: 10px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
+  outline: none;
+  background: #1f2937;
+  color: white;
 }
 
+/* BUTTONS */
+button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #22c55e;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #16a34a;
+}
+
+/* RESULT BOX */
 .result-box {
-  padding: 20px;
-  background: #111827;
-  margin: 10px;
-  border-radius: 10px;
+  margin: 15px;
+  padding: 15px;
+  background: #0f172a;
+  border-radius: 12px;
+  border: 1px solid #1f2937;
+}
+
+/* SCORE COLORS */
+#result {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* DETAILS */
+pre {
+  white-space: pre-wrap;
+  color: #cbd5e1;
+  font-size: 14px;
 }
